@@ -14,16 +14,16 @@ function getBoardId() {
   return id
 }
 
-function createConnectionId() {
+function createTabId() {
   return crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
 }
 
-function getWebSocketUrl() {
+function getWsUrl() {
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
   return `${protocol}//${window.location.hostname}:3001`
 }
 
-function pluralUsers(count) {
+function getUsersText(count) {
   const mod10 = count % 10
   const mod100 = count % 100
   if (mod100 >= 11 && mod100 <= 14) return 'пользователей'
@@ -32,7 +32,7 @@ function pluralUsers(count) {
   return 'пользователей'
 }
 
-function normalizeTasks(tasks) {
+function ensureTaskComments(tasks) {
   return tasks.map((task) => ({
     ...task,
     comments: Array.isArray(task.comments) ? task.comments : [],
@@ -44,12 +44,12 @@ function App() {
   const storageKey = `kanban-tasks-${boardId}`
   const [taskList, setTaskList] = useState(() => {
     const savedTasks = localStorage.getItem(storageKey)
-    return savedTasks ? normalizeTasks(JSON.parse(savedTasks)) : []
+    return savedTasks ? ensureTaskComments(JSON.parse(savedTasks)) : []
   })
-  const [onlineUsers, setOnlineUsers] = useState(null)
+  const [onlineCount, setOnlineCount] = useState(null)
   const socketRef = useRef(null)
   const remoteUpdateRef = useRef(false)
-  const connectionIdRef = useRef(createConnectionId())
+  const tabIdRef = useRef(createTabId())
 
   useEffect(() => {
     let cancelled = false
@@ -57,14 +57,14 @@ function App() {
     let ws = null
 
     const connect = () => {
-      ws = new WebSocket(getWebSocketUrl())
+      ws = new WebSocket(getWsUrl())
       socketRef.current = ws
 
-      const sendInit = () => {
+      const sendInitMessage = () => {
         ws.send(JSON.stringify({
           type: 'init',
           boardId,
-          clientId: connectionIdRef.current,
+          clientId: tabIdRef.current,
         }))
       }
 
@@ -73,17 +73,17 @@ function App() {
           ws.close()
           return
         }
-        sendInit()
+        sendInitMessage()
       }
 
       ws.onmessage = (event) => {
         const data = JSON.parse(event.data)
         if ((data.type === 'update' || data.type === 'init') && Array.isArray(data.tasks)) {
           remoteUpdateRef.current = true
-          setTaskList(normalizeTasks(data.tasks))
+          setTaskList(ensureTaskComments(data.tasks))
         }
         if (typeof data.onlineUsers === 'number' && (data.type === 'presence' || data.type === 'init')) {
-          setOnlineUsers(data.onlineUsers)
+          setOnlineCount(data.onlineUsers)
         }
       }
 
@@ -138,11 +138,11 @@ function App() {
           <a href={shareUrl}>{shareUrl}</a>
         </p>
         <p className="onlineUsers">
-          {onlineUsers === null ? (
+          {onlineCount === null ? (
             'Подключение к доске…'
           ) : (
             <>
-              На доске сейчас: <strong>{onlineUsers}</strong> {pluralUsers(onlineUsers)}
+              На доске сейчас: <strong>{onlineCount}</strong> {getUsersText(onlineCount)}
             </>
           )}
         </p>

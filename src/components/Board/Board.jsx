@@ -6,49 +6,48 @@ import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { SortableContext, arrayMove } from '@dnd-kit/sortable';
 import TaskCard from '../TaskCard/TaskCard';
 
-/** Максимум задач в каждой колонке */
-const COLUMN_LIMITS = {
+const TASK_LIMITS = {
   backlog: 10,
   ready: 10,
   inProgress: 10,
   finished: 10,
 };
 
-const COLUMN_TITLES = {
+const COLUMN_NAMES = {
   backlog: 'Backlog',
   ready: 'Ready',
   inProgress: 'In Progress',
   finished: 'Finished',
 };
 
-function countTasksInColumn(taskList, status) {
+function getTaskCount(taskList, status) {
   return taskList.filter((task) => task.status === status).length;
 }
 
-function canAddToColumn(taskList, targetStatus) {
-  const limit = COLUMN_LIMITS[targetStatus];
+function canAddTask(taskList, targetStatus) {
+  const limit = TASK_LIMITS[targetStatus];
   if (limit == null) return true;
-  return countTasksInColumn(taskList, targetStatus) < limit;
+  return getTaskCount(taskList, targetStatus) < limit;
 }
 
-function canMoveToColumn(taskList, taskId, targetStatus) {
-  const limit = COLUMN_LIMITS[targetStatus];
+function canMoveTask(taskList, taskId, targetStatus) {
+  const limit = TASK_LIMITS[targetStatus];
   if (limit == null) return true;
 
   const task = taskList.find((t) => t.id === taskId);
   if (!task || task.status === targetStatus) return true;
 
-  return canAddToColumn(taskList, targetStatus);
+  return canAddTask(taskList, targetStatus);
 }
 
 export default function Board({ taskList, setTaskList }) {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [limitWarning, setLimitWarning] = useState(null);
+  const [limitText, setLimitText] = useState(null);
 
   const handleAddTask = (task) => {
-    if (!canAddToColumn(taskList, 'backlog')) {
-      showLimitWarning('backlog');
+    if (!canAddTask(taskList, 'backlog')) {
+      showLimitText('backlog');
       return;
     }
     const newTask = {
@@ -62,16 +61,16 @@ export default function Board({ taskList, setTaskList }) {
     setIsPopupOpen(false);
   };
 
-  const showLimitWarning = (status) => {
-    const limit = COLUMN_LIMITS[status];
-    const title = COLUMN_TITLES[status] ?? status;
-    setLimitWarning(`В колонке «${title}» максимум ${limit} задач`);
-    setTimeout(() => setLimitWarning(null), 3500);
+  const showLimitText = (status) => {
+    const limit = TASK_LIMITS[status];
+    const title = COLUMN_NAMES[status] ?? status;
+    setLimitText(`В колонке «${title}» максимум ${limit} задач`);
+    setTimeout(() => setLimitText(null), 3500);
   };
 
   const handleMoveTask = (taskId, newStatus) => {
-    if (!canMoveToColumn(taskList, taskId, newStatus)) {
-      showLimitWarning(newStatus);
+    if (!canMoveTask(taskList, taskId, newStatus)) {
+      showLimitText(newStatus);
       return;
     }
     setTaskList((prevTasks) =>
@@ -133,8 +132,8 @@ export default function Board({ taskList, setTaskList }) {
     const overStatus = over.data.current?.status;
 
     if (activeStatus !== overStatus) {
-      if (!canMoveToColumn(taskList, active.id, overStatus)) {
-        showLimitWarning(overStatus);
+      if (!canMoveTask(taskList, active.id, overStatus)) {
+        showLimitText(overStatus);
         setActiveTask(null);
         return;
       }
@@ -206,7 +205,7 @@ export default function Board({ taskList, setTaskList }) {
         </div>
       )}
 
-      {limitWarning && <p className={style.limitWarning}>{limitWarning}</p>}
+      {limitText && <p className={style.limitWarning}>{limitText}</p>}
 
       <div className={style.boardHeader}>
          <input
@@ -222,11 +221,11 @@ export default function Board({ taskList, setTaskList }) {
           <button
             className={style.addButton}
             onClick={() => setIsPopupOpen(true)}
-            disabled={!canAddToColumn(taskList, 'backlog')}
+            disabled={!canAddTask(taskList, 'backlog')}
             title={
-              canAddToColumn(taskList, 'backlog')
+              canAddTask(taskList, 'backlog')
                 ? undefined
-                : `В Backlog максимум ${COLUMN_LIMITS.backlog} задач`
+                : `В Backlog максимум ${TASK_LIMITS.backlog} задач`
             }
           >
             Добавить задачу
@@ -240,8 +239,8 @@ export default function Board({ taskList, setTaskList }) {
           <Column
             columnTitle="Backlog"
             tasks={getTasksByStatus('backlog')}
-            taskCount={countTasksInColumn(taskList, 'backlog')}
-            taskLimit={COLUMN_LIMITS.backlog}
+            taskCount={getTaskCount(taskList, 'backlog')}
+            taskLimit={TASK_LIMITS.backlog}
             onMoveTask={handleMoveTask}
             onEditTask={handleEditTask}
             onAddComment={handleAddComment}
@@ -253,8 +252,8 @@ export default function Board({ taskList, setTaskList }) {
           <Column
             columnTitle="Ready"
             tasks={getTasksByStatus('ready')}
-            taskCount={countTasksInColumn(taskList, 'ready')}
-            taskLimit={COLUMN_LIMITS.ready}
+            taskCount={getTaskCount(taskList, 'ready')}
+            taskLimit={TASK_LIMITS.ready}
             onMoveTask={handleMoveTask}
             onEditTask={handleEditTask}
             onAddComment={handleAddComment}
@@ -266,8 +265,8 @@ export default function Board({ taskList, setTaskList }) {
           <Column
             columnTitle="In Progress"
             tasks={getTasksByStatus('inProgress')}
-            taskCount={countTasksInColumn(taskList, 'inProgress')}
-            taskLimit={COLUMN_LIMITS.inProgress}
+            taskCount={getTaskCount(taskList, 'inProgress')}
+            taskLimit={TASK_LIMITS.inProgress}
             onMoveTask={handleMoveTask}
             onEditTask={handleEditTask}
             onAddComment={handleAddComment}
@@ -279,8 +278,8 @@ export default function Board({ taskList, setTaskList }) {
           <Column
             columnTitle="Finished"
             tasks={getTasksByStatus('finished')}
-            taskCount={countTasksInColumn(taskList, 'finished')}
-            taskLimit={COLUMN_LIMITS.finished}
+            taskCount={getTaskCount(taskList, 'finished')}
+            taskLimit={TASK_LIMITS.finished}
             onMoveTask={handleMoveTask}
             onEditTask={handleEditTask}
             onAddComment={handleAddComment}
