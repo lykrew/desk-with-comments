@@ -1,0 +1,317 @@
+/* Основной стиль карточки */
+.taskCard {
+  background: var(--page-bg);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: grab;
+  user-select: none;
+  position: relative;
+  animation: cardAppear 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.taskCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
+  border-color: rgba(79, 70, 229, 0.2);
+  background: linear-gradient(to bottom right, var(--page-bg), rgba(79, 70, 229, 0.02));
+}
+
+.taskCard:active {
+  cursor: grabbing;
+  transform: scale(0.98);
+  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.06);
+}
+
+/* Карточка в процессе перетаскивания */
+.taskCardDragging {
+  opacity: 0.4;
+  transform: scale(0.95);
+  box-shadow: none;
+  background: rgba(148, 163, 184, 0.08);
+  border-style: dashed;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Активная перетаскиваемая карточка */
+.taskCard[data-dragging="true"] {
+  opacity: 0.9;
+  transform: scale(1.05) rotate(2deg);
+  box-shadow: 0 25px 50px rgba(15, 23, 42, 0.25);
+  z-index: 1000;
+  cursor: grabbing;
+  background: var(--page-bg);
+  border-color: rgba(79, 70, 229, 0.5);
+  animation: cardPickup 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Анимация поднятия карточки */
+@keyframes cardPickup {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1.05) rotate(2deg);
+    box-shadow: 0 25px 50px rgba(15, 23, 42, 0.25);
+  }
+}
+
+/* Анимация появления новой карточки */
+@keyframes cardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Пульсация при перемещении в другую колонку */
+@keyframes cardMovePulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+    box-shadow: 0 12px 28px rgba(79, 70, 229, 0.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.taskCard[data-just-moved="true"] {
+  animation: cardMovePulse 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Заголовок задачи */
+.taskTitle {
+  font-size: 1rem;
+  color: var(--text-h);
+  margin-top: 10px;
+  line-height: 1.4;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.taskTitle:hover {
+  background: rgba(79, 70, 229, 0.05);
+}
+
+/* Поле ввода для редактирования */
+.taskTitleInput {
+  font-size: 1rem;
+  color: var(--text-h);
+  margin: 0;
+  padding: 6px 10px;
+  border: 2px solid #4f46e5;
+  border-radius: 8px;
+  background: white;
+  width: 100%;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.taskTitleInput:focus {
+  border-color: #4338ca;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+/* Описание задачи */
+.taskDescription {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .taskCard:hover {
+    transform: translateY(-1px);
+  }
+  
+  .taskCard[data-dragging="true"] {
+    transform: scale(1.02);
+  }
+}
+
+.taskDescriptionInput {
+  margin: 0;
+  padding: 8px;
+  border: 2px solid #4f46e5;
+  border-radius: 8px;
+  background: white;
+  width: 100%;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-color);
+  outline: none;
+  resize: vertical;
+  min-height: 60px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.taskDescriptionInput:focus {
+  border-color: #4338ca;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.taskDescription {
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.taskDescription:hover {
+  background: rgba(79, 70, 229, 0.05);
+}
+
+.editableArea {
+  display: inline-block;
+  pointer-events: auto; /* Разрешаем события только внутри этой области */
+}
+
+.taskCard > * {
+  pointer-events: none; /* Отключаем события на всех дочерних элементах */
+}
+
+.taskCard:not([data-dragging="true"]) .editableArea {
+  pointer-events: auto; /* Включаем только для зоны редактирования */
+}
+
+
+.taskCard {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+             box-shadow 0.3s ease;
+  cursor: grab;
+  user-select: none;
+}
+
+.taskCardDragging {
+  z-index: 1000;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  transform: scale(1.05);
+}
+
+.taskCardOverlay {
+  opacity: 0.9;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+  transform: scale(1.1) !important;
+  filter: blur(2px);
+  pointer-events: none; /* Отключаем события мыши на overlay */
+}
+
+.commentsSection {
+  margin-top: 4px;
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+  padding-top: 10px;
+  pointer-events: auto;
+}
+
+.commentsToggle {
+  background: none;
+  border: none;
+  color: #4f46e5;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.commentsToggle:hover {
+  text-decoration: underline;
+}
+
+.commentsBody {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.commentsEmpty {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.commentsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 140px;
+  overflow-y: auto;
+}
+
+.commentItem {
+  background: rgba(79, 70, 229, 0.06);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--text-h);
+  word-break: break-word;
+}
+
+.commentForm {
+  display: flex;
+  gap: 6px;
+}
+
+.commentInput {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.commentInput:focus {
+  border-color: #4f46e5;
+}
+
+.commentInput:disabled {
+  background: #f1f5f9;
+  cursor: not-allowed;
+}
+
+.commentSubmit {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  background: #4f46e5;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.commentSubmit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

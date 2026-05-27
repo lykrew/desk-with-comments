@@ -1,0 +1,142 @@
+.appShell {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.pageHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 30px 28px;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.pageHeader p {
+  color: var(--muted);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.boardMeta {
+  font-size: 0.9rem;
+}
+
+.boardMeta code {
+  background: rgba(79, 70, 229, 0.08);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.onlineUsers strong {
+  color: var(--text-h);
+}
+
+.boardSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.column {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 20px;
+  min-width: 240px;
+  max-width: 100%;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.column h2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.column h2 .count {
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.card {
+  background: var(--page-bg);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+}
+
+.card h3,
+.card p {
+  margin: 0;
+}
+
+.card h3 {
+  font-size: 1rem;
+  color: var(--text-h);
+}
+
+.card p {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.actionButton {
+  border: 1px solid transparent;
+  border-radius: 14px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  color: var(--text-h);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.actionButton:hover {
+  background: #eef2ff;
+}
+
+.actionButton.primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+@media (max-width: 1024px) {
+  .appShell {
+    padding: 0 12px;
+  }
+
+  .pageHeader {
+    padding: 24px 20px;
+  }
+
+  .column {
+    min-width: 100%;
+  }
+}

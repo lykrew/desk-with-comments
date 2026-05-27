@@ -1,0 +1,94 @@
+.column {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 20px;
+  min-width: 240px;
+  max-width: 100%;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.columnTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--text-h);
+  line-height: 1.2;
+  user-select: none;
+}
+
+.taskCount {
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+  background: rgba(148, 163, 184, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.taskCountFull {
+  color: #b45309;
+  background: rgba(245, 158, 11, 0.15);
+}
+
+.taskListFull {
+  opacity: 0.85;
+}
+
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 60px;
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 4px;
+  position: relative;
+}
+
+/* Состояние при перетаскивании над колонкой */
+.taskListOver {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.08), rgba(99, 102, 241, 0.08));
+  border: 2px dashed rgba(79, 70, 229, 0.3);
+  border-radius: 16px;
+  transform: scale(1.02);
+  box-shadow: 0 0 30px rgba(79, 70, 229, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.emptyMessage {
+  text-align: center;
+  color: var(--muted);
+  font-style: italic;
+  padding: 30px 0;
+  font-size: 0.95rem;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+  border: 2px dashed rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+}
+
+/* Улучшенный placeholder для sortable */
+[data-sortable-placeholder] {
+  background: rgba(79, 70, 229, 0.08);
+  border: 2px dashed rgba(79, 70, 229, 0.3);
+  border-radius: 18px;
+  min-height: 80px;
+  transition: all 0.3s ease;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .column {
+    min-width: 100%;
+    margin-bottom: 16px;
+  }
+}
